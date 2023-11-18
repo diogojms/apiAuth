@@ -6,7 +6,6 @@ const userSchema = new schema({
     username: {
         type: String,
         required: true,
-        lowercase: true,
         unique: true,
         minlength: 6,
         maxlength: 32,
@@ -17,8 +16,6 @@ const userSchema = new schema({
         required: true,
         lowercase: true,
         unique: true,
-        minlength: 6,
-        maxlength: 32,
         trim: true
     },
     password: {
