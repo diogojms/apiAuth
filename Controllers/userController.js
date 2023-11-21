@@ -1,6 +1,8 @@
 const { Server } = require("http");
 const User = require("../Models/user");
+const { SendToLog } = require('../logs');
 const { checkToken } = require("../utils");
+const { getIdFromToken } = require("../utils");
 
 const userController = {
   getUserById: [
@@ -27,8 +29,67 @@ const userController = {
 
     res.status(200).json(user)
   }
-  ]
+  ],
+
+  changeInfo :async (req, res) => {
+    try {
+      const { newNIF, newName, newEmail } = req.body;
+
+      const userId = await getIdFromToken(req);
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado' });
+      }
+  
+      // Verifique a revogação do token
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(" ")[1];
+  
+      if (revokedTokens.includes(token)) {
+        const logData = {
+          Level: 'Error',
+          Action: '/users/change-nif',
+          Description: 'Revoked token used',
+          User: userId
+        };
+        SendToLog(logData);
+        return res.status(401).json({ msg: "Token revogado utilizado" });
+      } else {
+        // Atualize as informações do usuário
+        if (newNIF) user.nif = newNIF;
+        if (newName) user.name = newName;
+        if (newEmail) user.email = newEmail;
+  
+        // Salve as alterações no banco de dados
+        await user.save();
+  
+        const logData = {
+          Level: 'Info',
+          Action: '/users/changeInfo',
+          Description: `Informações alteradas com sucesso para o usuário com ID: ${userId}`,
+          User: userId
+        };
+  
+        SendToLog(logData);
+  
+        return res.status(200).json({ msg: 'Informações alteradas com sucesso' });
+      }
+    } catch (err) {
+      const logData = {
+        Level: 'Error',
+        Action: '/users/changeInfo',
+        Description: err.message,
+        User: "Error"
+      };
+  
+      SendToLog(logData);
+  
+      return res.status(500).json({ msg: 'Erro interno do servidor' });
+    }
+  }
    
 };
+
 
 module.exports = userController;

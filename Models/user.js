@@ -19,7 +19,7 @@ const UserSchema = new Schema({
         unique: true,
     },
     role: {
-        type: Number,
+        type: String,
         required: false,
     },
     login_id: {
