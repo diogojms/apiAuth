@@ -31,12 +31,16 @@ const userController = {
   }
   ],
 
-  changeInfo :async (req, res) => {
+  changeInfo :[checkToken,async (req, res) => {
     try {
       const { newNIF, newName, newEmail } = req.body;
+      console.log('Dados recebidos:', { newNIF, newName, newEmail });
 
       const userId = await getIdFromToken(req);
       const user = await User.findById(userId);
+
+      console.log (userId);
+      console.log (user);
   
       if (!user) {
         return res.status(404).json({ msg: 'Usuário não encontrado' });
@@ -45,24 +49,30 @@ const userController = {
       // Verifique a revogação do token
       const authHeader = req.headers['authorization'];
       const token = authHeader && authHeader.split(" ")[1];
+
+      console.log('Token:', token);
   
-      if (revokedTokens.includes(token)) {
-        const logData = {
-          Level: 'Error',
-          Action: '/users/change-nif',
-          Description: 'Revoked token used',
-          User: userId
-        };
-        SendToLog(logData);
-        return res.status(401).json({ msg: "Token revogado utilizado" });
-      } else {
+      // if (revokedTokens.includes(token)) {
+      //   const logData = {
+      //     Level: 'Error',
+      //     Action: '/users/change-nif',
+      //     Description: 'Revoked token used',
+      //     User: userId
+      //   };
+      //   SendToLog(logData);
+      //   return res.status(401).json({ msg: "Token revogado utilizado" });
+      // } 
         // Atualize as informações do usuário
         if (newNIF) user.nif = newNIF;
         if (newName) user.name = newName;
         if (newEmail) user.email = newEmail;
-  
+
+        console.log('Novas informações do usuário:', user);
+
         // Salve as alterações no banco de dados
         await user.save();
+
+        console.log('Informações salvas com sucesso no banco de dados:', user);
   
         const logData = {
           Level: 'Info',
@@ -74,7 +84,6 @@ const userController = {
         SendToLog(logData);
   
         return res.status(200).json({ msg: 'Informações alteradas com sucesso' });
-      }
     } catch (err) {
       const logData = {
         Level: 'Error',
@@ -87,8 +96,8 @@ const userController = {
   
       return res.status(500).json({ msg: 'Erro interno do servidor' });
     }
-  }
-   
+  },
+  ]
 };
 
 
