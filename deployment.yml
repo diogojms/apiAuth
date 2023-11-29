@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scc-deployment
+  labels:
+    app: scc_project
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: scc_project
+  template:
+    metadata:
+      labels:
+        app: scc_project
+    spec:
+      containers:
+      - name: scc_project
+        image: diogojms/scc_project:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
