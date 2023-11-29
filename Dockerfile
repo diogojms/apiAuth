@@ -20,7 +20,7 @@ COPY . .
 # Set environment variables
 ENV MONGO_DB_URL=mongodb+srv://DriveCleaner:DriveCleanerG7@cluster0.bj3pzfe.mongodb.net/
 
-EXPOSE 8081
+EXPOSE 8080
 CMD [ "node", "server.js" ]
 
 #docker build -t api-auth . 
