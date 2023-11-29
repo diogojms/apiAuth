@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scc-deployment
+  name: scc_deployment
   labels:
     app: scc_project
 spec:
