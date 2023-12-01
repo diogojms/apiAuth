@@ -19,4 +19,11 @@ spec:
         image: diogojms/scc_project:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 8081
+        env:
+          - name: MONGODB_URI
+            value: "mongodb+srv://DriveCleaner:DriveCleanerG7@cluster0.bj3pzfe.mongodb.net/User"
+          - name: SECRET
+            value: "jfcnbjsnwdelwjcnewdlejbsfew"
+          - name: LOGS_URI
+            value: "guest:guest@localhost:5672/"
