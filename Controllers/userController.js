@@ -23,7 +23,7 @@ const userController = {
     }
 
     dataToLog = {
-        Level: 'Info', Action: `/user/${id}`,
+        Level: 'Info', Action: `/user/getUser/${id}`,
         Description: user, User: await getIdFromToken(req) }
     SendToLog(dataToLog)
 
