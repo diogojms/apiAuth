@@ -8,8 +8,6 @@ var amqp = require('amqplib/callback_api');
 
 require('dotenv').config();
 
-//Demo Variables
-const tokenValidation = 60 * 60 * 6  //seconds
 const rateLimitTimer = 30 //seconds
 const rateLimiter = 10 //attempts
 

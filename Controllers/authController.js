@@ -91,8 +91,7 @@ const authController = {
         User: null
       };
       SendToLog(logData);
-      return res.status(422).json({ msg: "Password is required" });
-    }
+      return res.status(422).json({ msg: "Password is required" });}
     const auth = await Auth.findOne({ username });
     if (!auth) {
       const logData = {
@@ -129,7 +128,6 @@ const authController = {
         }
       );
       if (revokedTokens.includes(token)) {
-        // Token revogado, trate a solicitação de acordo
         const logData = {
           Level: 'Error',
           Action: `/auth/logout`,
@@ -250,7 +248,6 @@ const authController = {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(" ")[1];
 
-    // Adicione o token à lista de tokens revogados
     revokedTokens.push(token);
 
     const logData = {

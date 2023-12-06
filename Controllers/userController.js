@@ -1,4 +1,3 @@
-const { Server } = require("http");
 const User = require("../Models/user");
 const { SendToLog } = require('../logs');
 const { checkToken } = require("../utils");
@@ -49,19 +48,7 @@ const userController = {
       // Verifique a revogação do token
       const authHeader = req.headers['authorization'];
       const token = authHeader && authHeader.split(" ")[1];
-
-      console.log('Token:', token);
   
-      // if (revokedTokens.includes(token)) {
-      //   const logData = {
-      //     Level: 'Error',
-      //     Action: '/users/change-nif',
-      //     Description: 'Revoked token used',
-      //     User: userId
-      //   };
-      //   SendToLog(logData);
-      //   return res.status(401).json({ msg: "Token revogado utilizado" });
-      // } 
         // Atualize as informações do usuário
         if (newNIF) user.nif = newNIF;
         if (newName) user.name = newName;
