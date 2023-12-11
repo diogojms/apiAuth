@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit')
 var amqp = require('amqplib/callback_api');
+const { specs, swaggerUi } = require('./swagger');
+
 
 require('dotenv').config();
 
@@ -40,6 +42,7 @@ app.use('/user', require('./Routes/userRoutes'));
 // documentation
 //app.use('/apidoc', swaggerui.serve, swaggerui.setup(swaggerDocument));
 //app.use('/apidocjs', express.static(path.join(__dirname, 'apidoc')));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 let port=8081;
 app.listen(port, () => {

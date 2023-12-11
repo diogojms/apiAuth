@@ -15,6 +15,50 @@ const revokedTokens = [];
 // ... outras importações e constantes ...
 
 const authController = {
+  /**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Endpoint to register a new user with the provided information.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       description: User registration data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               nif:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               dubPassword:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - name
+ *               - username
+ *               - password
+ *               - role
+ *     responses:
+ *       '200':
+ *         description: User successfully registered
+ *       '422':
+ *         description: Unprocessable Entity - Invalid input data
+ *       '500':
+ *         description: Internal Server Error - Registration failed
+ */
   register: async (req, res) => {
     const { email, name, nif, username, password, dubPassword, role } = req.body;
 
@@ -72,6 +116,42 @@ const authController = {
       }
     }
   },
+
+  /**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Authenticate user and generate JWT token
+ *     description: Endpoint to authenticate a user using their username and password, and generate a JWT token.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       description: User login data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             required:
+ *               - username
+ *               - password
+ *     responses:
+ *       '200':
+ *         description: Authentication successful, JWT token generated
+ *       '401':
+ *         description: Unauthorized - Revoked token used
+ *       '404':
+ *         description: Not Found - Username not found
+ *       '422':
+ *         description: Unprocessable Entity - Invalid username or password
+ *       '500':
+ *         description: Internal Server Error - Authentication failed
+ */
   login: async (req, res) => {
     const { username, password } = req.body;
     if (!username) {
@@ -158,7 +238,43 @@ const authController = {
       res.status(500).json({ msg: err });
     }
   },
-
+/**
+ * @swagger
+ * /auth/changePassword:
+ *   post:
+ *     summary: Change user password
+ *     description: Endpoint to change the password of the authenticated user.
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User password change data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *             required:
+ *               - password
+ *               - newPassword
+ *     responses:
+ *       '200':
+ *         description: Password changed successfully
+ *       '401':
+ *         description: Unauthorized - Revoked token used
+ *       '404':
+ *         description: Not Found - Authentication not found
+ *       '422':
+ *         description: Unprocessable Entity - Invalid password or new password not provided
+ *       '500':
+ *         description: Internal Server Error - Password change failed
+ */
   changePassword: [
     checkToken,
     async (req, res) => {
@@ -243,6 +359,30 @@ const authController = {
     }
   ],
   // Rota para logout
+  /**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     description: Endpoint to log out the authenticated user, revoking the current session token.
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Logout successful, session token revoked
+ *       '401':
+ *         description: Unauthorized - Invalid or revoked token used
+ *     headers:
+ *       - name: Authorization
+ *         in: header
+ *         description: Bearer token for authentication
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: "Bearer {token}"
+ */
   logout: [
     checkToken, async (req, res) => {
     const authHeader = req.headers['authorization'];

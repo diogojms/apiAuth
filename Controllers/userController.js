@@ -4,6 +4,37 @@ const { checkToken } = require("../utils");
 const { getIdFromToken } = require("../utils");
 
 const userController = {
+  /**
+ * @swagger
+ * /user/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     description: Endpoint to retrieve user information by providing the user ID.
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user to retrieve
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: User information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 // Define your user properties here
+ *       '422':
+ *         description: Unprocessable Entity - User not found
+ *       '401':
+ *         description: Unauthorized - Invalid or revoked token used
+ */
   getUserById: [
     checkToken,
     async (req, res) => {
@@ -29,7 +60,40 @@ const userController = {
     res.status(200).json(user)
   }
   ],
-
+/**
+ * @swagger
+ * /users/changeInfo:
+ *   post:
+ *     summary: Change user information
+ *     description: Endpoint to change user information (NIF, name, email) for the authenticated user.
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User information change data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newNIF:
+ *                 type: string
+ *               newName:
+ *                 type: string
+ *               newEmail:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: User information changed successfully
+ *       '404':
+ *         description: Not Found - User not found
+ *       '500':
+ *         description: Internal Server Error - Failed to change user information
+ *       '401':
+ *         description: Unauthorized - Invalid or revoked token used
+ */
   changeInfo :[checkToken,async (req, res) => {
     try {
       const { newNIF, newName, newEmail } = req.body;
