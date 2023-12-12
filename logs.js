@@ -26,6 +26,7 @@ const queue = 'tasks';
 // }
 
 const sendToRabbitMQ = (message) => {
+  console.log('LOGS_URI:', process.env.LOGS_URI);
     amqp.connect(`amqp://${process.env.LOGS_URI}`, function (error0, connection) {
       if (error0) {
         throw error0;

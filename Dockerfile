@@ -19,6 +19,7 @@ COPY . .
 
 # Set environment variables
 ENV MONGO_DB_URL=mongodb+srv://DriveCleaner:DriveCleanerG7@cluster0.bj3pzfe.mongodb.net/
+ENV LOGS_URI=guest:guest@localhost:5672/
 
 EXPOSE 8081
 CMD [ "node", "server.js" ]
