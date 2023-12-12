@@ -154,6 +154,7 @@ const authController = {
  */
   login: async (req, res) => {
     const { username, password } = req.body;
+    console.log(req.body)
     if (!username) {
       const logData = {
         Level: 'Error',
