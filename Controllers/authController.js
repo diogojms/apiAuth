@@ -6,8 +6,6 @@ const { SendToLog } = require('../logs');
 const { checkToken } = require("../utils");
 const { getIdFromToken } = require("../utils");
 
-
-
 const tokenValidation = 60 * 60 * 6;
 
 const revokedTokens = [];

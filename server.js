@@ -7,7 +7,6 @@ const rateLimit = require('express-rate-limit')
 var amqp = require('amqplib/callback_api');
 const { specs, swaggerUi } = require('./swagger');
 
-
 require('dotenv').config();
 
 const rateLimitTimer = 30 //seconds
@@ -38,11 +37,11 @@ app.use(limiter);
 // routes
 app.use('/auth', require('./Routes/authRoutes'));
 app.use('/user', require('./Routes/userRoutes'));
+app.use('/api-docs-auth', swaggerUi.serve, swaggerUi.setup(specs));
 
 // documentation
 //app.use('/apidoc', swaggerui.serve, swaggerui.setup(swaggerDocument));
 //app.use('/apidocjs', express.static(path.join(__dirname, 'apidoc')));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 let port=8081;
 app.listen(port, () => {
