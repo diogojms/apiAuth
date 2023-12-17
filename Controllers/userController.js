@@ -6,7 +6,7 @@ const { getIdFromToken } = require("../utils");
 const userController = {
   /**
  * @swagger
- * /user/{id}:
+ * /{id}:
  *   get:
  *     summary: Get user by ID
  *     description: Endpoint to retrieve user information by providing the user ID.
@@ -62,7 +62,7 @@ const userController = {
   ],
 /**
  * @swagger
- * /users/changeInfo:
+ * /changeInfo:
  *   post:
  *     summary: Change user information
  *     description: Endpoint to change user information (NIF, name, email) for the authenticated user.

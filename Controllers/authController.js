@@ -15,7 +15,7 @@ const revokedTokens = [];
 const authController = {
   /**
  * @swagger
- * /auth/register:
+ * /register:
  *   post:
  *     summary: Register a new user
  *     description: Endpoint to register a new user with the provided information.
@@ -117,7 +117,7 @@ const authController = {
 
   /**
  * @swagger
- * /auth/login:
+ * /login:
  *   post:
  *     summary: Authenticate user and generate JWT token
  *     description: Endpoint to authenticate a user using their username and password, and generate a JWT token.
@@ -239,7 +239,7 @@ const authController = {
   },
 /**
  * @swagger
- * /auth/changePassword:
+ * /password:
  *   post:
  *     summary: Change user password
  *     description: Endpoint to change the password of the authenticated user.
@@ -360,7 +360,7 @@ const authController = {
   // Rota para logout
   /**
  * @swagger
- * /auth/logout:
+ * /logout:
  *   post:
  *     summary: Logout user
  *     description: Endpoint to log out the authenticated user, revoking the current session token.
