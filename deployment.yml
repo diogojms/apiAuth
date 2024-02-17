@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pcc-project
+  name: pcc-auth
   labels:
-    app: pcc-project
+    app: pcc-auth
 spec:
   replicas: 3
   selector:
