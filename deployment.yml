@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scc-project
+  name: pcc-project
   labels:
-    app: scc-project
+    app: pcc-project
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: scc-project
+      app: pcc-auth
   template:
     metadata:
       labels:
-        app: scc-project
+        app: pcc-auth
     spec:
       containers:
-      - name: scc-project
-        image: diogojms/scc_project:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8081
-        env:
-          - name: MONGODB_URI
-            value: "mongodb+srv://DriveCleaner:DriveCleanerG7@cluster0.bj3pzfe.mongodb.net/User"
-          - name: SECRET
-            value: "jfcnbjsnwdelwjcnewdlejbsfew"
-          - name: LOGS_URI
-            value: "guest:guest@localhost:5672/"
+        - name: pcc-auth
+          image: diogojms/pcc_auth:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: MONGODB_URI
+              value: "mongodb+srv://DriveCleaner:DriveCleanerG7@cluster0.bj3pzfe.mongodb.net/User"
+            - name: SECRET
+              value: "jfcnbjsnwdelwjcnewdlejbsfew"
+            - name: LOGS_URI
+              value: "guest:guest@localhost:5672/"
