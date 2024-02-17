@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pcc_auth
+  name: pcc-auth
   labels:
-    app: pcc_auth
+    app: pcc-auth
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: pcc_auth
+      app: pcc-auth
   template:
     metadata:
       labels:
-        app: pcc_auth
+        app: pcc-auth
     spec:
       containers:
-        - name: pcc_auth
+        - name: pcc-auth
           image: diogojms/pcc_auth:latest
           imagePullPolicy: Always
           ports:

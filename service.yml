@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pcc_auth
+  name: pcc-auth
   labels:
-    app: pcc_auth
+    app: pcc-auth
 spec:
   type: LoadBalancer
   ports:
@@ -12,5 +12,5 @@ spec:
       protocol: TCP
       targetPort: 8081
   selector:
-    app: pcc_auth
+    app: pcc-auth
   sessionAffinity: None
