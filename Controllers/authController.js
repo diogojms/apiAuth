@@ -81,7 +81,7 @@ const authController = {
 
       if (existsUsername) return validateAndLogError('Username', 'Username já existe');
       if (existsNif) return validateAndLogError('NIF', 'NIF já existe');
-      if (existsEmail) return validateAndLogError('Email', 'Email já existe');
+      if (existsEmail) return validateAndLogError('Email', 'Email já existe', 401);
 
       const salt = await bcrypt.genSalt(12);
       const hash = await bcrypt.hash(password, salt);
@@ -170,7 +170,8 @@ const authController = {
         User: null
       };
       SendToLog(logData);
-      return res.status(422).json({ msg: "Password is required" });}
+      return res.status(422).json({ msg: "Password is required" });
+    }
     const auth = await Auth.findOne({ username });
     if (!auth) {
       const logData = {
@@ -237,43 +238,43 @@ const authController = {
       res.status(500).json({ msg: err });
     }
   },
-/**
- * @swagger
- * /password:
- *   post:
- *     summary: Change user password
- *     description: Endpoint to change the password of the authenticated user.
- *     tags:
- *       - Authentication
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       description: User password change data
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               password:
- *                 type: string
- *               newPassword:
- *                 type: string
- *             required:
- *               - password
- *               - newPassword
- *     responses:
- *       '200':
- *         description: Password changed successfully
- *       '401':
- *         description: Unauthorized - Revoked token used
- *       '404':
- *         description: Not Found - Authentication not found
- *       '422':
- *         description: Unprocessable Entity - Invalid password or new password not provided
- *       '500':
- *         description: Internal Server Error - Password change failed
- */
+  /**
+   * @swagger
+   * /password:
+   *   post:
+   *     summary: Change user password
+   *     description: Endpoint to change the password of the authenticated user.
+   *     tags:
+   *       - Authentication
+   *     security:
+   *       - BearerAuth: []
+   *     requestBody:
+   *       description: User password change data
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               password:
+   *                 type: string
+   *               newPassword:
+   *                 type: string
+   *             required:
+   *               - password
+   *               - newPassword
+   *     responses:
+   *       '200':
+   *         description: Password changed successfully
+   *       '401':
+   *         description: Unauthorized - Revoked token used
+   *       '404':
+   *         description: Not Found - Authentication not found
+   *       '422':
+   *         description: Unprocessable Entity - Invalid password or new password not provided
+   *       '500':
+   *         description: Internal Server Error - Password change failed
+   */
   changePassword: [
     checkToken,
     async (req, res) => {
@@ -384,21 +385,21 @@ const authController = {
  */
   logout: [
     checkToken, async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(" ")[1];
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(" ")[1];
 
-    revokedTokens.push(token);
+      revokedTokens.push(token);
 
-    const logData = {
-      Level: 'Info',
-      Action: `/auth/logout`,
-      Description: 'User logged out',
-      User: null
-    };
-    SendToLog(logData);
+      const logData = {
+        Level: 'Info',
+        Action: `/auth/logout`,
+        Description: 'User logged out',
+        User: null
+      };
+      SendToLog(logData);
 
-    res.status(200).json({ msg: "Logout successful" });
-  },
+      res.status(200).json({ msg: "Logout successful" });
+    },
   ]
 };
 
