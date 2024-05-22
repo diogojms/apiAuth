@@ -26,6 +26,22 @@ const UserSchema = new Schema({
         type: Number,
         required: false,
     },
+    address: {
+        type: String,
+        required: false,
+    },
+    city: {
+        type: String,
+        required: false,
+    },
+    zip_code: {
+        type: String,
+        required: false,
+    },
+    phone_number: {
+        type: String,
+        required: false,
+    },
 
 },
     { collection: 'users' }

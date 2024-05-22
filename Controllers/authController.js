@@ -58,7 +58,7 @@ const authController = {
  *         description: Internal Server Error - Registration failed
  */
   register: async (req, res) => {
-    const { email, name, nif, username, password, dubPassword, role } = req.body;
+    const { email, name, nif, address, city, zipcode, phone, username, password, dubPassword, role } = req.body;
 
     const validateAndLogError = (field, errorMsg) => {
       SendToLog({ Level: 'Error', Action: '/auth/register', Description: errorMsg, User: null });
@@ -69,6 +69,11 @@ const authController = {
 
     if (!email) return validateAndLogError('Email', 'Email necessário');
     if (!name) return validateAndLogError('Name', 'Nome necessário');
+    if (!nif) return validateAndLogError('Nif', 'Nif necessário');
+    if (!address) return validateAndLogError('Address', 'Address necessário');
+    if (!city) return validateAndLogError('City', 'City necessário');
+    if (!zipcode) return validateAndLogError('Zipcode', 'Zipcode necessário');
+    if (!phone) return validateAndLogError('Phone', 'Phone necessário');
     if (!username) return validateAndLogError('Username', 'Username necessário');
     if (!password) return validateAndLogError('Password', 'Password necessária');
     if (!role) return validateAndLogError('Role', 'Role necessária');
@@ -78,10 +83,12 @@ const authController = {
       const existsUsername = await Auth.findOne({ username });
       const existsNif = await Auth.findOne({ nif });
       const existsEmail = await Auth.findOne({ email });
+      const existsPhone = await Auth.findOne({ phone });
 
       if (existsUsername) return validateAndLogError('Username', 'Username já existe');
       if (existsNif) return validateAndLogError('NIF', 'NIF já existe');
       if (existsEmail) return validateAndLogError('Email', 'Email já existe', 401);
+      if (existsPhone) return validateAndLogError('phone', 'Phone já existe');
 
       const salt = await bcrypt.genSalt(12);
       const hash = await bcrypt.hash(password, salt);
@@ -98,6 +105,10 @@ const authController = {
         email,
         name,
         nif,
+        address,
+        city,
+        zipcode,
+        phone,
         role,
       });
 
@@ -224,7 +235,7 @@ const authController = {
           User: null
         };
         SendToLog(logData);
-        res.status(200).json({ token, tokenValidation });
+        res.status(200).json({ token, tokenValidation, name: user.name, id: user.id, city:user.city });
       }
 
     } catch (err) {
@@ -400,7 +411,29 @@ const authController = {
 
       res.status(200).json({ msg: "Logout successful" });
     },
-  ]
+  ],
+
+  recovery : async (req, res) => {
+    const { email, newPassword } = req.body;
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+  
+       // Hash the new password before saving it
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+    
+      // Update user's password
+      user.password = hashedPassword;
+     await user.save();
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  } 
 };
 
 module.exports = authController;
