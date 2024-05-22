@@ -235,7 +235,7 @@ const authController = {
           User: null
         };
         SendToLog(logData);
-        res.status(200).json({ token, tokenValidation, name: user.name, id: user.id, city:user.city });
+        res.status(200).json({ token, tokenValidation, name: user.name, id: user.id, city: user.city });
       }
 
     } catch (err) {
@@ -417,23 +417,33 @@ const authController = {
     const { email, newPassword } = req.body;
   
     try {
+      // Find the user by email
       const user = await User.findOne({ email });
       if (!user) {
         return res.status(404).json({ msg: "User not found" });
       }
   
-       // Hash the new password before saving it
+      // Find the corresponding auth record by user ID
+      const auth = await Auth.findOne({ _id: user._id });
+      if (!auth) {
+        return res.status(404).json({ msg: "Auth record not found" });
+      }
+  
+      // Hash the new password before saving it
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
-    
-      // Update user's password
-      user.password = hashedPassword;
-     await user.save();
+  
+      // Update the password in the auth record
+      auth.password = hashedPassword;
+      await auth.save();
+  
+      // Return a success response
+      return res.status(200).json({ msg: "Password updated successfully" });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ msg: "Internal server error" });
+      return res.status(500).json({ msg: "Internal server error" });
     }
-  } 
+  }
 };
 
 module.exports = authController;
