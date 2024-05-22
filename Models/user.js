@@ -34,11 +34,11 @@ const UserSchema = new Schema({
         type: String,
         required: false,
     },
-    zip_code: {
+    zipcode: {
         type: String,
         required: false,
     },
-    phone_number: {
+    phone: {
         type: String,
         required: false,
     },
