@@ -96,8 +96,8 @@ const userController = {
  */
   changeInfo :[checkToken,async (req, res) => {
     try {
-      const { newNIF, newName, newEmail } = req.body;
-      console.log('Dados recebidos:', { newNIF, newName, newEmail });
+      const { newNIF, newName, newEmail, newAddress, newCity, newZipCode, newPhone } = req.body;
+      console.log('Dados recebidos:', { newNIF, newName, newEmail, newAddress, newCity, newZipCode, newPhone });
 
       const userId = await getIdFromToken(req);
       const user = await User.findById(userId);
@@ -117,6 +117,11 @@ const userController = {
         if (newNIF) user.nif = newNIF;
         if (newName) user.name = newName;
         if (newEmail) user.email = newEmail;
+        if (newAddress) user.address = newAddress;
+        if (newCity) user.city = newCity;
+        if (newZipCode) user.zipcode = newZipCode;
+        if (newPhone) user.phone = newPhone;
+  
 
         console.log('Novas informações do usuário:', user);
 
@@ -148,7 +153,102 @@ const userController = {
       return res.status(500).json({ msg: 'Erro interno do servidor' });
     }
   },
-  ]
+  ],
+/**
+ * @swagger
+ * /users/countUsers:
+ *   get:
+ *     summary: Count users
+ *     description: Endpoint to count users
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: User count retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: number
+ *       '500':
+ *         description: Internal Server Error - Failed to retrieve user count
+ *       '401':
+ *         description: Unauthorized - Invalid or revoked token used
+ *     headers:
+ *       - name: Authorization
+ *         in: header
+ *         description: Bearer token for authentication
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: "Bearer {token}"
+ */
+  countUsers :[checkToken,async (req, res) => {
+    try {
+      const userCount = await User.countDocuments();
+      
+      const logData = {
+        Level: 'Info',
+        Action: '/users/countUsers',
+        Description: `Total count of users retrieved: ${userCount}`,
+        User: await getIdFromToken(req),
+      };
+
+      SendToLog(logData);
+
+      res.status(200).json({ count: userCount });
+    } catch (err) {
+      const logData = {
+        Level: 'Error',
+        Action: '/users/countUsers',
+        Description: err.message,
+        User: 'Error',
+      };
+
+      SendToLog(logData);
+
+      res.status(500).json({ msg: 'Erro interno do servidor' });
+    }
+  },
+  ],
+
+  getUsers: [checkToken, async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const role = req.query.role;
+
+    if (limit > 100) {
+        return res.status(400).json({ message: 'Limit cannot exceed 100' });
+    }
+
+    const startIndex = (page - 1) * limit;
+
+    // Build the query object
+    let query = {};
+    if (role !== undefined) {
+        query.role = role;
+    }
+
+    try {
+        const users = await User.find(query).skip(startIndex).limit(limit);
+        const totalUsers = await User.countDocuments(query);
+
+        const pagination = {
+            currentPage: page,
+            totalPages: Math.ceil(totalUsers / limit),
+            totalUsers: totalUsers,
+        };
+
+        res.json({ status: 'success', users: users, pagination: pagination });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}]
+
 };
 
 
