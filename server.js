@@ -37,6 +37,8 @@ app.use(limiter);
 // routes
 app.use('/auth', require('./Routes/authRoutes'));
 app.use('/user', require('./Routes/userRoutes'));
+app.use('/car', require('./Routes/carRoutes'));
+app.use('/payment', require('./Routes/paymentRoutes'));
 app.use('/api-docs-auth', swaggerUi.serve, swaggerUi.setup(specs));
 
 // documentation

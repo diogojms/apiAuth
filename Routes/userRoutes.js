@@ -7,6 +7,5 @@ router.get('/count', checkToken, userController.countUsers);
 router.get('/', checkToken, userController.getUsers);
 router.get('/:id', checkToken, userController.getUserById);
 router.post('/changeInfo',checkToken, userController.changeInfo);
-router.get('/count', checkToken, userController.countUsers);
 
 module.exports = router;
