@@ -39,7 +39,7 @@ exports.getCar = async (req, res) => {
     if (!car) {
       return res.status(404).json({ msg: 'Car not found' });
     }
-    res.json({ status: 'success', car: car });
+    res.json({ car: car });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: 500, message: 'Error fetching car', data: {} });
