@@ -60,7 +60,7 @@ exports.addCar = async (req, res) => {
 exports.changeInfo = async (req, res) => {
   try {
     const { newName, newBrand, newModel, newType, newYear, newColor, newLicense_plate, newImage } = req.body;
-    const { id } = req.query;
+    const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: 'Invalid Car ID' });
