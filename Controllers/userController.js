@@ -294,7 +294,8 @@ const userController = {
         }
 
         if (req.body) {
-          user.img = req.body;
+          const imageBuffer = Buffer.from(req.body.image, "base64");
+          user.img = imageBuffer;
           await user.save();
 
           const logData = {
