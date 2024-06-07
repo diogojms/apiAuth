@@ -38,32 +38,52 @@ const userController = {
   getUserById: [
     checkToken,
     async (req, res) => {
-      const id = req.params.id;
-      let dataToLog;
+      try {
+        const id = req.params.id;
+        const userIdFromToken = await getIdFromToken(req);
+        let dataToLog;
 
-      const user = await User.findById(id, "-_id");
+        const user = await User.findById(id, "-_id");
 
-      if (!user) {
+        if (!user) {
+          dataToLog = {
+            Level: "Error",
+            Action: `/user/${id}`,
+            Description: "Utilizador não encontrado",
+            User: userIdFromToken,
+          };
+          SendToLog(dataToLog);
+
+          return res.status(422).json({ msg: "Utilizador não encontrado" });
+        }
+
+        // Check if the user has an image and convert it to base64 if it exists
+        let userResponse = user.toObject(); // Convert the Mongoose document to a plain JavaScript object
+        if (user.img) {
+          userResponse.img = user.img.toString("base64");
+        }
+
         dataToLog = {
-          Level: "Error",
-          Action: `/user/${id}`,
-          Description: user,
-          User: await getIdFromToken(req),
+          Level: "Info",
+          Action: `/user/getUser/${id}`,
+          Description: userResponse,
+          User: userIdFromToken,
         };
         SendToLog(dataToLog);
 
-        return res.status(422).json({ msg: "Utilizador não encontrado" });
+        res.status(200).json(userResponse);
+      } catch (err) {
+        const userIdFromToken = await getIdFromToken(req);
+        const dataToLog = {
+          Level: "Error",
+          Action: `/user/getUser/${req.params.id}`,
+          Description: err.message,
+          User: userIdFromToken,
+        };
+        SendToLog(dataToLog);
+
+        return res.status(500).json({ msg: "Erro interno do servidor" });
       }
-
-      dataToLog = {
-        Level: "Info",
-        Action: `/user/getUser/${id}`,
-        Description: user,
-        User: await getIdFromToken(req),
-      };
-      SendToLog(dataToLog);
-
-      res.status(200).json(user);
     },
   ],
   /**
@@ -326,19 +346,22 @@ const userController = {
     },
   ],
 
-  deleteUser: [checkToken, async (req, res) => {
-    const userId = req.params.id;
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+  deleteUser: [
+    checkToken,
+    async (req, res) => {
+      const userId = req.params.id;
+      try {
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        await user.remove();
+        res.status(200).json({ message: "User deleted successfully" });
+      } catch (err) {
+        res.status(500).json({ message: "Internal server error" });
       }
-      await user.remove();
-      res.status(200).json({ message: 'User deleted successfully' });
-    } catch (err) {
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  }]
+    },
+  ],
 };
 
 module.exports = userController;

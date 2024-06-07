@@ -243,12 +243,8 @@ const authController = {
       const token = jwt.sign(
         {
           id: auth._id,
-          role: user.role,
-          nif: user.nif,
           name: user.name,
           email: user.email,
-          phone: user.phone,
-          img: user.img,
         },
         secret,
         {
