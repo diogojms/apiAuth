@@ -59,8 +59,9 @@ const userController = {
 
         // Check if the user has an image and convert it to base64 if it exists
         let userResponse = user.toObject(); // Convert the Mongoose document to a plain JavaScript object
-        if (user.img) {
-          userResponse.img = user.img.toString("base64");
+        if (user.img && user.img.data) {
+          const base64Image = user.img.data.toString("base64");
+          userResponse.img = `data:${user.img.contentType};base64,${base64Image}`;
         }
 
         dataToLog = {
@@ -124,6 +125,7 @@ const userController = {
     checkToken,
     async (req, res) => {
       try {
+        console.log("Recebendo dados:", req.body);
         const {
           newNIF,
           newName,
@@ -132,7 +134,6 @@ const userController = {
           newCity,
           newZipCode,
           newPhone,
-          img,
         } = req.body;
         console.log("Dados recebidos:", {
           newNIF,
@@ -142,7 +143,6 @@ const userController = {
           newCity,
           newZipCode,
           newPhone,
-          img,
         });
 
         const userId = await getIdFromToken(req);
@@ -167,7 +167,6 @@ const userController = {
         if (newCity) user.city = newCity;
         if (newZipCode) user.zipcode = newZipCode;
         if (newPhone) user.phone = newPhone;
-        if (img) user.img = img;
 
         console.log("Novas informações do usuário:", user);
 
@@ -313,9 +312,22 @@ const userController = {
           return res.status(404).json({ msg: "Usuário não encontrado" });
         }
 
-        if (req.body) {
-          const imageBuffer = Buffer.from(req.body.image, "base64");
-          user.img = imageBuffer;
+        if (req.body && req.body.image) {
+          const base64Image = req.body.image;
+          const matches = base64Image.match(
+            /^data:image\/([A-Za-z-+/]+);base64,(.+)$/
+          );
+
+          if (!matches || matches.length !== 3) {
+            return res.status(400).json({ msg: "Formato de imagem inválido" });
+          }
+
+          const imageType = matches[1];
+          const imageBuffer = Buffer.from(matches[2], "base64");
+          user.img = {
+            data: imageBuffer,
+            contentType: `image/${imageType}`,
+          };
           await user.save();
 
           const logData = {
