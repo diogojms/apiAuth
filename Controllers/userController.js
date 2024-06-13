@@ -43,7 +43,7 @@ const userController = {
         const userIdFromToken = await getIdFromToken(req);
         let dataToLog;
 
-        const user = await User.findById(id, "-_id");
+        const user = await User.findById(id);
 
         if (!user) {
           dataToLog = {
