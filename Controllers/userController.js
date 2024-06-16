@@ -249,7 +249,7 @@ const userController = {
 
         SendToLog(logData);
 
-        res.status(200).json({ count: userCount });
+        res.status(200).json({ userCount: userCount });
       } catch (err) {
         const logData = {
           Level: "Error",
