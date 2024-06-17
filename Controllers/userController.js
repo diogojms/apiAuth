@@ -269,11 +269,12 @@ const userController = {
     checkToken,
     async (req, res) => {
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 20;
+      let limit = parseInt(req.query.limit);
       const role = req.query.role;
 
-      if (limit > 100) {
-        return res.status(400).json({ message: "Limit cannot exceed 100" });
+      // If no limit is specified, set it to a very large number
+      if (!limit) {
+        limit = Number.MAX_SAFE_INTEGER;
       }
 
       const startIndex = (page - 1) * limit;
@@ -300,6 +301,7 @@ const userController = {
       }
     },
   ],
+
 
   uploadImg: [
     checkToken,
